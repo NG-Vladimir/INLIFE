@@ -1,6 +1,6 @@
 // === НАСТРОЙКА АДМИНОВ ===
 const ADMIN_USERNAMES = ['wewew111', 'NG_VLADIMIR', 'Joyliana'];
-const API_URL = "http://localhost:5000"; // либо твой сервер
+const API_URL = "http://localhost:5000"; // или твой сервер
 
 (function checkTelegramWebApp() {
     if (typeof window.Telegram === 'undefined' || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe) {
@@ -16,6 +16,8 @@ tg.ready();
 let events = [];
 let users = [];
 let currentUser = null;
+
+// --- API FUNCTIONS ---
 
 async function fetchUsers() {
     const res = await fetch(`${API_URL}/users`);
@@ -94,6 +96,8 @@ async function joinEvent(eventId, button) {
     });
 }
 
+// --- ADMIN PANEL LOGIC ---
+
 function isAdmin() {
     const user = tg.initDataUnsafe.user;
     return user && ADMIN_USERNAMES.includes(user.username);
@@ -108,6 +112,8 @@ function updateAdminUI() {
         document.querySelectorAll('.admin-access').forEach(el => el.style.display = 'none');
     }
 }
+
+// --- USER LOGIC ---
 
 function initCurrentUser() {
     const user = tg.initDataUnsafe.user;
@@ -157,6 +163,8 @@ function updateProfileStats() {
     }
 }
 
+// --- UI NAVIGATION ---
+
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -197,6 +205,8 @@ function showAdminTab(tabId, event) {
         renderAdminEvents();
     }
 }
+
+// --- RENDER FUNCTIONS ---
 
 function renderEvents() {
     const container = document.getElementById('events-container');
@@ -322,12 +332,15 @@ function getDaysUntilBirthday(birthday) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+// --- INIT ---
+
 document.addEventListener('DOMContentLoaded', async function () {
     await fetchEvents();
     await fetchUsers();
     initCurrentUser();
     renderEvents();
     renderUsersList();
+
     document.getElementById('profile-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const fullName = document.getElementById('profile-fullname').value;
@@ -339,6 +352,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         updateProfileDisplay();
         tg.showAlert('Профиль сохранён!');
     });
+
     document.getElementById('add-event-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const title = document.getElementById('event-title').value;
@@ -347,6 +361,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         await addEvent({ id: Date.now(), title, date, location });
         this.reset();
     });
+
     document.getElementById('broadcast-form').addEventListener('submit', function(e) {
         e.preventDefault();
         tg.showAlert('Рассылка доступна в будущем!');
