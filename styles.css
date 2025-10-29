@@ -195,6 +195,8 @@ body {
     font-size: 13px;
     color: var(--ios-text-secondary);
     margin-top: 4px;
+    display: block;
+    white-space: pre-line;
 }
 
 .profile-stats {
@@ -368,7 +370,69 @@ body {
     background: #f2f2f7;
 }
 
-/* Админ панель */
+/* Админ панель — табы как единый блок */
+.admin-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    justify-content: flex-start;
+    background: transparent;
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+.admin-nav-btn {
+    flex: 1 1 auto;
+    min-width: 80px;
+    min-height: 44px;
+    padding: 12px 18px;
+    border: 1px solid var(--ios-accent);
+    border-right: none;
+    background: #fff;
+    color: var(--ios-accent);
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    border-radius: 0;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: none;
+    z-index: 1;
+    position: relative;
+}
+
+.admin-nav-btn:focus {
+    outline: none;
+}
+
+.admin-nav-btn:first-child {
+    border-radius: 12px 0 0 12px;
+    border-left: 1px solid var(--ios-accent);
+}
+
+.admin-nav-btn:last-child {
+    border-radius: 0 12px 12px 0;
+    border-right: 1px solid var(--ios-accent);
+}
+
+.admin-nav-btn.active {
+    background: var(--ios-accent);
+    color: #fff;
+    z-index: 2;
+    border-color: var(--ios-accent);
+}
+
+.admin-tab {
+    display: none;
+}
+.admin-tab.active {
+    display: block;
+}
+
 .admin-card {
     background: var(--ios-card);
     border-radius: 12px;
@@ -383,46 +447,6 @@ body {
     font-weight: 600;
     margin-bottom: 16px;
     color: var(--ios-text);
-}
-
-.admin-nav {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-}
-
-.admin-nav-btn {
-    flex: 1;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 12px 16px;
-    border: 1px solid var(--ios-border);
-    background: var(--ios-card);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-    transition: background 0.2s, color 0.2s;
-}
-
-.admin-nav-btn.active {
-    background: var(--ios-accent);
-    color: white;
-    border-color: var(--ios-accent);
-}
-
-.admin-tab {
-    display: none;
-}
-
-.admin-tab.active {
-    display: block;
 }
 
 .admin-form {
@@ -572,25 +596,27 @@ body {
         background: #2c2c2e;
         border-color: #38383a;
     }
-    
     .ios-button.secondary:active {
         background: #3a3a3c;
     }
-    
     .form-group input, .form-group textarea {
         background: #2c2c2e;
         border-color: #38383a;
         color: white;
     }
-    
     .admin-event-item, .user-item, .birthday-item {
         background: #2c2c2e;
     }
-    
     .admin-nav-btn {
-        background: #2c2c2e;
+        background: #1c1c1e;
+        color: var(--ios-accent);
+        border: 1px solid var(--ios-accent);
     }
-
+    .admin-nav-btn.active {
+        background: var(--ios-accent);
+        color: #fff;
+        border-color: var(--ios-accent);
+    }
     .tab-bar {
         background: #18181aee;
         border-top: 1px solid #38383a;
@@ -624,7 +650,6 @@ body {
 .admin-access {
     display: none !important;
 }
-
 .show-admin .admin-access {
     display: flex !important;
 }
