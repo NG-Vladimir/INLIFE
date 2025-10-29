@@ -4,11 +4,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Имитируем БД в памяти
 users = []
 events = []
 
-ADMIN_USERNAMES = ['NG_VLADIMIR', 'Joyliana']
+ADMIN_USERNAMES = ['wewew111', 'NG_VLADIMIR', 'Joyliana']
 
 @app.route('/users', methods=['GET', 'POST'])
 def handle_users():

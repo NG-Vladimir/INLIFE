@@ -1,6 +1,6 @@
 // === НАСТРОЙКА АДМИНОВ ===
 const ADMIN_USERNAMES = ['wewew111', 'NG_VLADIMIR', 'Joyliana'];
-const API_URL = "http://localhost:5000"; // или твой сервер
+const API_URL = "http://localhost:5000"; // либо твой сервер
 
 (function checkTelegramWebApp() {
     if (typeof window.Telegram === 'undefined' || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe) {
