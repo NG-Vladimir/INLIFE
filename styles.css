@@ -8,32 +8,44 @@
     --ios-warning: #FF9500;
     --ios-error: #FF3B30;
     --ios-border: #c6c6c8;
-    --ios-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --ios-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'San Francisco', Arial, sans-serif;
     background: var(--ios-bg);
     color: var(--ios-text);
     line-height: 1.4;
-    padding-bottom: 80px;
+    padding-bottom: calc(64px + var(--safe-bottom));
+    padding-top: var(--safe-top);
+    overscroll-behavior-y: none;
 }
 
 .container {
     max-width: 400px;
     margin: 0 auto;
-    padding: 20px 16px;
+    padding: 20px 16px 0 16px;
 }
 
 /* Экраны */
 .screen {
     display: none;
+    animation: fadeInScreen 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes fadeInScreen {
+    from { opacity:0; transform: translateY(16px);}
+    to { opacity:1; transform: none;}
 }
 
 .screen.active {
@@ -46,22 +58,30 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    padding-top: 8px;
 }
 
 .section-title {
     font-size: 22px;
     font-weight: 700;
     color: var(--ios-text);
+    letter-spacing: -0.01em;
 }
 
 /* Приветственная карточка */
 .welcome-card {
     background: var(--ios-card);
-    border-radius: 16px;
-    padding: 32px 24px;
+    border-radius: 20px;
+    padding: 38px 24px 36px 24px;
     text-align: center;
     box-shadow: var(--ios-shadow);
     margin-top: 40px;
+    animation: cardAppear 0.7s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes cardAppear {
+    from { opacity: 0; transform: scale(0.98);}
+    to { opacity:1; transform: none;}
 }
 
 .welcome-icon {
@@ -71,10 +91,11 @@ body {
 }
 
 .welcome-title {
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 700;
     margin-bottom: 12px;
     color: var(--ios-text);
+    letter-spacing: -0.01em;
 }
 
 .welcome-text {
@@ -90,6 +111,7 @@ body {
     border-radius: 16px;
     padding: 24px;
     box-shadow: var(--ios-shadow);
+    animation: cardAppear 0.7s cubic-bezier(.4,0,.2,1);
 }
 
 .profile-header {
@@ -108,22 +130,30 @@ body {
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 24px;
+    font-size: 28px;
+    box-shadow: 0 2px 8px rgba(0,122,255,0.08);
 }
 
 .profile-info {
     flex: 1;
+    min-width: 0;
 }
 
 .profile-name {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .profile-username {
     font-size: 14px;
     color: var(--ios-text-secondary);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .profile-form {
@@ -148,11 +178,12 @@ body {
 .form-group input, .form-group textarea {
     padding: 12px 16px;
     border: 1px solid var(--ios-border);
-    border-radius: 8px;
+    border-radius: 9px;
     font-size: 16px;
     font-family: inherit;
     background: var(--ios-card);
     color: var(--ios-text);
+    transition: border 0.2s;
 }
 
 .form-group input:focus, .form-group textarea:focus {
@@ -195,19 +226,22 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .event-card {
     background: var(--ios-card);
-    border-radius: 12px;
+    border-radius: 13px;
     padding: 20px;
     box-shadow: var(--ios-shadow);
     border: 1px solid var(--ios-border);
-    transition: transform 0.2s ease;
+    transition: transform 0.16s cubic-bezier(.4,0,.2,1), box-shadow 0.16s;
+    will-change: transform;
 }
 
 .event-card:active {
     transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
 
 .event-header {
@@ -221,6 +255,7 @@ body {
     font-size: 17px;
     font-weight: 600;
     color: var(--ios-text);
+    letter-spacing: -0.01em;
 }
 
 .event-badge {
@@ -256,18 +291,22 @@ body {
 /* Кнопки */
 .ios-button {
     width: 100%;
+    min-height: 44px;
     padding: 12px 20px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 17px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s cubic-bezier(.4,0,.2,1);
     font-family: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    box-shadow: 0 2px 8px rgba(0,122,255,0.03);
+    touch-action: manipulation;
+    will-change: transform;
 }
 
 .ios-button.primary {
@@ -277,7 +316,7 @@ body {
 
 .ios-button.primary:active {
     background: #0056CC;
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .ios-button.secondary {
@@ -288,7 +327,7 @@ body {
 
 .ios-button.secondary:active {
     background: #e5e5ea;
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .ios-button.success {
@@ -317,7 +356,12 @@ body {
     cursor: pointer;
     color: var(--ios-text-secondary);
     font-size: 20px;
-    transition: background 0.2s ease;
+    transition: background 0.2s;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-button:active {
@@ -331,6 +375,7 @@ body {
     padding: 20px;
     box-shadow: var(--ios-shadow);
     margin-bottom: 20px;
+    animation: cardAppear 0.7s cubic-bezier(.4,0,.2,1);
 }
 
 .admin-title {
@@ -350,6 +395,8 @@ body {
 
 .admin-nav-btn {
     flex: 1;
+    min-width: 44px;
+    min-height: 44px;
     padding: 12px 16px;
     border: 1px solid var(--ios-border);
     background: var(--ios-card);
@@ -361,6 +408,7 @@ body {
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
 }
 
 .admin-nav-btn.active {
@@ -387,6 +435,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .admin-event-item, .user-item, .birthday-item {
@@ -401,16 +450,23 @@ body {
 
 .admin-event-info, .user-info, .birthday-info {
     flex: 1;
+    min-width: 0;
 }
 
 .admin-event-name, .user-name, .birthday-name {
     font-weight: 600;
     margin-bottom: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .admin-event-meta, .user-meta, .birthday-meta {
     font-size: 14px;
     color: var(--ios-text-secondary);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .admin-event-actions, .user-actions {
@@ -426,6 +482,12 @@ body {
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
 }
 
 .message-btn {
@@ -441,17 +503,24 @@ body {
     background: var(--ios-card);
     border-top: 1px solid var(--ios-border);
     display: flex;
-    padding: 8px 0;
+    padding: 8px 0 calc(4px + var(--safe-bottom)) 0;
     backdrop-filter: blur(20px);
+    z-index: 44;
+    box-shadow: 0 0 16px rgba(0,0,0,0.04);
 }
 
 .tab-item {
     flex: 1;
     text-align: center;
-    padding: 8px;
+    padding: 8px 0 2px 0;
     cursor: pointer;
-    transition: color 0.3s ease-in-out;
+    transition: color 0.22s cubic-bezier(.4,0,.2,1);
     color: var(--ios-text-secondary);
+    font-size: 13px;
+    min-width: 44px;
+    min-height: 44px;
+    user-select: none;
+    will-change: color;
 }
 
 .tab-item.active {
@@ -461,11 +530,13 @@ body {
 .tab-icon {
     font-size: 22px;
     margin-bottom: 2px;
+    display: block;
 }
 
 .tab-label {
     font-size: 10px;
     font-weight: 500;
+    letter-spacing: 0.01em;
 }
 
 /* Состояния */
@@ -494,6 +565,7 @@ body {
         --ios-text: #ffffff;
         --ios-text-secondary: #8e8e93;
         --ios-border: #38383a;
+        --ios-shadow: 0 8px 32px rgba(0,0,0,0.24);
     }
     
     .ios-button.secondary {
@@ -518,6 +590,34 @@ body {
     .admin-nav-btn {
         background: #2c2c2e;
     }
+
+    .tab-bar {
+        background: #18181aee;
+        border-top: 1px solid #38383a;
+    }
+}
+
+/* Safe-area фиксы для iOS */
+@supports(padding: max(0px)) {
+    .tab-bar {
+        padding-bottom: calc(4px + var(--safe-bottom));
+    }
+    body {
+        padding-bottom: calc(64px + var(--safe-bottom));
+        padding-top: var(--safe-top);
+    }
+}
+
+/* Scroll плавность на iOS */
+.events-list, .users-list, .birthdays-list {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* Запретить выделение текста для интерфейса */
+.screen, .tab-bar, .ios-button, .admin-nav, .profile-card, .event-card, .admin-card {
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* Утилиты */

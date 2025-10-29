@@ -1,8 +1,15 @@
+// Проверка, что приложение запущено через Telegram Mini App
+(function checkTelegramWebApp() {
+    if (typeof window.Telegram === 'undefined' || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe) {
+        document.body.innerHTML = '';
+        document.getElementById('tg-warning').style.display = 'block';
+    }
+})();
+
 // Инициализация Telegram Web App
 let tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
-
 console.log("INLIFE App запущен!");
 
 // Хранилище данных
@@ -212,6 +219,16 @@ function showScreen(screenId) {
     } else if (screenId === 'profile-screen') {
         updateProfileDisplay();
     }
+    // Скрывать клавиатуру и смещать таб-бар при фокусе на input
+    if (screenId === 'profile-screen') {
+        setTimeout(() => {
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.onfocus = () => document.querySelector('.tab-bar').style.display = "none";
+                input.onblur = () => document.querySelector('.tab-bar').style.display = "flex";
+            });
+        }, 50);
+    }
 }
 
 // Обновление активной вкладки
@@ -221,7 +238,6 @@ function updateActiveTab(screenId) {
         'events-screen': 1,
         'profile-screen': 2
     };
-    
     document.querySelectorAll('.tab-item').forEach((tab, index) => {
         tab.classList.toggle('active', index === tabMap[screenId]);
     });
@@ -235,10 +251,8 @@ function showAdminTab(tabId) {
     document.querySelectorAll('.admin-nav-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
-    
     // Обновляем данные при переключении вкладок
     if (tabId === 'users-tab') {
         renderUsersList();
@@ -251,15 +265,12 @@ function showAdminTab(tabId) {
 function renderEvents() {
     const container = document.getElementById('events-container');
     const emptyState = document.getElementById('empty-events');
-    
     if (events.length === 0) {
         emptyState.style.display = 'block';
         container.innerHTML = '';
         return;
     }
-    
     emptyState.style.display = 'none';
-    
     container.innerHTML = events.map(event => `
         <div class="event-card">
             <div class="event-header">
@@ -289,12 +300,10 @@ function renderEvents() {
 // Рендер событий для админов
 function renderAdminEvents() {
     const container = document.getElementById('admin-events-container');
-    
     if (events.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: var(--ios-text-secondary);">Нет активных событий</p>';
         return;
     }
-    
     container.innerHTML = events.map(event => `
         <div class="admin-event-item">
             <div class="admin-event-info">
@@ -314,7 +323,6 @@ function renderAdminEvents() {
 // Рендер списка пользователей
 function renderUsersList() {
     const container = document.getElementById('users-list-container');
-    
     if (users.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
@@ -324,7 +332,6 @@ function renderUsersList() {
         `;
         return;
     }
-    
     container.innerHTML = users.map(user => `
         <div class="user-item">
             <div class="user-info">
@@ -344,7 +351,6 @@ function renderUsersList() {
 // Рендер списка дней рождений
 function renderBirthdaysList() {
     const container = document.getElementById('birthdays-list-container');
-    
     const upcomingBirthdays = users
         .filter(user => user.birthday)
         .map(user => ({
@@ -353,7 +359,6 @@ function renderBirthdaysList() {
         }))
         .filter(user => user.daysUntil <= 30)
         .sort((a, b) => a.daysUntil - b.daysUntil);
-    
     if (upcomingBirthdays.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
@@ -363,7 +368,6 @@ function renderBirthdaysList() {
         `;
         return;
     }
-    
     container.innerHTML = upcomingBirthdays.map(user => `
         <div class="birthday-item">
             <div class="birthday-info">
@@ -388,32 +392,26 @@ function renderBirthdaysList() {
 function joinEvent(eventId, button) {
     const event = events.find(e => e.id === eventId);
     if (!event || !currentUser) return;
-    
     const originalHTML = button.innerHTML;
     button.innerHTML = '<i class="ri-loader-4-line"></i> Записываем...';
     button.disabled = true;
-    
     setTimeout(() => {
         if (!event.participants.includes(currentUser.id)) {
             event.participants.push(currentUser.id);
             saveEventsToStorage();
         }
-        
         // ✅ ФИКС 1: Зелёная кнопка "Скоро увидимся!"
         button.innerHTML = '<i class="ri-checkbox-circle-line"></i> Скоро увидимся!';
         button.classList.remove('secondary');
         button.classList.add('success');
         button.disabled = true;
-        
         tg.showPopup({
             title: 'Успешно!',
             message: 'Ты записан на событие! Ждём тебя!',
             buttons: [{ type: 'ok' }]
         });
-        
         renderEvents();
         updateProfileStats();
-        
     }, 800);
 }
 
@@ -426,12 +424,10 @@ function addEvent(eventData) {
         location: eventData.location,
         participants: []
     };
-    
     events.unshift(newEvent);
     saveEventsToStorage();
     renderEvents();
     renderAdminEvents();
-    
     tg.showAlert('Событие успешно добавлено!');
 }
 
@@ -449,17 +445,14 @@ function deleteEvent(eventId) {
 // Сохранение профиля
 function saveProfile(profileData) {
     if (!currentUser) return;
-    
     currentUser.fullName = profileData.fullName;
     currentUser.birthday = profileData.birthday;
-    
     // Обновляем пользователя в общем списке
     const userIndex = users.findIndex(u => u.id === currentUser.id);
     if (userIndex !== -1) {
         users[userIndex] = currentUser;
         saveUsersToStorage();
     }
-    
     updateProfileDisplay();
     showSavedProfile();
     tg.showAlert('Профиль сохранён!');
@@ -500,44 +493,35 @@ document.addEventListener('DOMContentLoaded', function() {
     initCurrentUser();
     checkAdminRights();
     renderEvents();
-    
     // Обработка формы профиля
     document.getElementById('profile-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const formData = {
             fullName: document.getElementById('profile-fullname').value,
             birthday: document.getElementById('profile-birthday').value
         };
-        
         saveProfile(formData);
     });
-    
     // Обработка формы добавления события
     document.getElementById('add-event-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const formData = {
             title: document.getElementById('event-title').value,
             date: document.getElementById('event-date').value,
             location: document.getElementById('event-location').value
         };
-        
         addEvent(formData);
         this.reset();
     });
-    
     // Обработка формы рассылки
     document.getElementById('broadcast-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const message = document.getElementById('broadcast-message').value;
         if (message && confirm(`Отправить это сообщение всем ${users.length} пользователям?`)) {
             sendBroadcast(message);
             this.reset();
         }
     });
-    
     // Адаптация под тему Telegram
     if (tg.colorScheme === 'dark') {
         document.documentElement.style.setProperty('--ios-bg', '#000000');
