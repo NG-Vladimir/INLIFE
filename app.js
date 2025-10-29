@@ -1,8 +1,7 @@
-// === НАЧАЛО НОВОГО app.js ===
-// Адрес сервера API:
-const API_URL = "http://localhost:5000"; // если на хостинге, укажи свой адрес
+// === НАСТРОЙКА АДМИНОВ ===
+const ADMIN_USERNAMES = ['wewew111', 'NG_VLADIMIR', 'Joyliana'];
+const API_URL = "http://localhost:5000"; // или твой сервер
 
-// Проверка, что приложение запущено через Telegram Mini App
 (function checkTelegramWebApp() {
     if (typeof window.Telegram === 'undefined' || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe) {
         document.body.innerHTML = '';
@@ -10,18 +9,14 @@ const API_URL = "http://localhost:5000"; // если на хостинге, ук
     }
 })();
 
-// Инициализация Telegram Web App
 let tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
-console.log("INLIFE App запущен!");
 
-// Данные приложения
 let events = [];
 let users = [];
 let currentUser = null;
 
-// --- API функции ---
 async function fetchUsers() {
     const res = await fetch(`${API_URL}/users`);
     users = await res.json();
@@ -32,7 +27,6 @@ async function fetchEvents() {
     events = await res.json();
 }
 
-// Синхронизация (добавление/обновление) пользователя
 async function syncUser(user) {
     await fetch(`${API_URL}/users`, {
         method: "POST",
@@ -41,7 +35,6 @@ async function syncUser(user) {
     });
 }
 
-// Обновление профиля пользователя
 async function updateUserProfile(user_id, data) {
     await fetch(`${API_URL}/users/${user_id}`, {
         method: "PATCH",
@@ -50,30 +43,38 @@ async function updateUserProfile(user_id, data) {
     });
 }
 
-// Добавление события
 async function addEvent(eventData) {
     eventData.participants = [];
-    await fetch(`${API_URL}/events`, {
+    eventData.username = currentUser.username;
+    const res = await fetch(`${API_URL}/events`, {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(eventData)
     });
+    if (res.status === 403) {
+        tg.showAlert("Только админ может добавлять события!");
+        return;
+    }
     await fetchEvents();
     renderEvents();
     renderAdminEvents();
     tg.showAlert('Событие успешно добавлено!');
 }
 
-// Удаление события
 async function deleteEvent(eventId) {
-    // (Пример без API удаления, просто убираем на клиенте)
-    events = events.filter(event => event.id !== eventId);
+    const res = await fetch(`${API_URL}/events/${eventId}?username=${currentUser.username}`, {
+        method: "DELETE"
+    });
+    if (res.status === 403) {
+        tg.showAlert("Только админ может удалять события!");
+        return;
+    }
+    await fetchEvents();
     renderEvents();
     renderAdminEvents();
-    tg.showAlert('Событие удалено (только на клиенте, для полного удаления — доработай API)');
+    tg.showAlert('Событие удалено!');
 }
 
-// Присоединиться к событию
 async function joinEvent(eventId, button) {
     if (!currentUser) return;
     button.innerHTML = '<i class="ri-loader-4-line"></i> Записываем...';
@@ -93,9 +94,21 @@ async function joinEvent(eventId, button) {
     });
 }
 
-// --- Логика приложения ---
+function isAdmin() {
+    const user = tg.initDataUnsafe.user;
+    return user && ADMIN_USERNAMES.includes(user.username);
+}
 
-// Инициализация текущего пользователя
+function updateAdminUI() {
+    if (isAdmin()) {
+        document.body.classList.add('show-admin');
+        document.querySelectorAll('.admin-access').forEach(el => el.style.display = '');
+    } else {
+        document.body.classList.remove('show-admin');
+        document.querySelectorAll('.admin-access').forEach(el => el.style.display = 'none');
+    }
+}
+
 function initCurrentUser() {
     const user = tg.initDataUnsafe.user;
     if (user) {
@@ -108,16 +121,15 @@ function initCurrentUser() {
             birthday: '',
             joinedAt: new Date().toISOString()
         };
-        // Синхронизируем пользователя на сервере
         syncUser(currentUser).then(() => {
             fetchUsers().then(() => {
                 updateProfileDisplay();
+                updateAdminUI();
             });
         });
     }
 }
 
-// Обновление профиля на экране
 function updateProfileDisplay() {
     if (currentUser) {
         document.getElementById('profile-display-name').textContent =
@@ -133,7 +145,6 @@ function updateProfileDisplay() {
     }
 }
 
-// Обновление статистики профиля
 function updateProfileStats() {
     document.getElementById('events-count').textContent =
         events.filter(event => event.participants.includes(currentUser.id)).length;
@@ -146,8 +157,6 @@ function updateProfileStats() {
     }
 }
 
-// --- Переключение экранов и вкладок ---
-
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -158,12 +167,12 @@ function showScreen(screenId) {
         renderEvents();
     } else if (screenId === 'admin-screen') {
         renderAdminEvents();
+        updateAdminUI();
     } else if (screenId === 'profile-screen') {
         updateProfileDisplay();
     }
 }
 
-// Обновление активной нижней вкладки
 function updateActiveTab(screenId) {
     const tabMap = {
         'welcome-screen': 0,
@@ -174,8 +183,6 @@ function updateActiveTab(screenId) {
         tab.classList.toggle('active', index === tabMap[screenId]);
     });
 }
-
-// --- Админка ---
 
 function showAdminTab(tabId, event) {
     document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
@@ -190,8 +197,6 @@ function showAdminTab(tabId, event) {
         renderAdminEvents();
     }
 }
-
-// --- Рендеры ---
 
 function renderEvents() {
     const container = document.getElementById('events-container');
@@ -306,8 +311,6 @@ function renderBirthdaysList() {
     `).join('');
 }
 
-// --- Вспомогательные функции ---
-
 function getDaysUntilBirthday(birthday) {
     const today = new Date();
     const birthDate = new Date(birthday);
@@ -319,16 +322,12 @@ function getDaysUntilBirthday(birthday) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// --- Инициализация приложения ---
-
 document.addEventListener('DOMContentLoaded', async function () {
     await fetchEvents();
     await fetchUsers();
     initCurrentUser();
     renderEvents();
     renderUsersList();
-
-    // Форма профиля
     document.getElementById('profile-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const fullName = document.getElementById('profile-fullname').value;
@@ -340,8 +339,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         updateProfileDisplay();
         tg.showAlert('Профиль сохранён!');
     });
-
-    // Форма добавления события
     document.getElementById('add-event-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const title = document.getElementById('event-title').value;
@@ -350,12 +347,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         await addEvent({ id: Date.now(), title, date, location });
         this.reset();
     });
-
-    // Форма рассылки (заготовка)
     document.getElementById('broadcast-form').addEventListener('submit', function(e) {
         e.preventDefault();
         tg.showAlert('Рассылка доступна в будущем!');
         this.reset();
     });
 });
-// === КОНЕЦ НОВОГО app.js ===

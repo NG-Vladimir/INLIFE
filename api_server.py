@@ -4,11 +4,12 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Имитация базы данных в памяти (можно заменить на файл/БД)
+# Имитируем БД в памяти
 users = []
 events = []
 
-# Получить всех пользователей или добавить нового
+ADMIN_USERNAMES = ['NG_VLADIMIR', 'Joyliana']
+
 @app.route('/users', methods=['GET', 'POST'])
 def handle_users():
     if request.method == 'GET':
@@ -22,7 +23,6 @@ def handle_users():
             users.append(data)
         return jsonify({'status': 'ok'})
 
-# Обновить профиль пользователя
 @app.route('/users/<int:user_id>', methods=['PATCH'])
 def update_user(user_id):
     data = request.json
@@ -32,19 +32,20 @@ def update_user(user_id):
             return jsonify({"status": "ok"})
     return jsonify({"error": "not found"}), 404
 
-# Получить все события или добавить новое
 @app.route('/events', methods=['GET', 'POST'])
 def handle_events():
     if request.method == 'GET':
         return jsonify(events)
     elif request.method == 'POST':
         data = request.json
+        username = data.get('username', '')
+        if username not in ADMIN_USERNAMES:
+            return jsonify({'error': 'forbidden'}), 403
         existing = next((e for e in events if e['id'] == data['id']), None)
         if not existing:
             events.append(data)
         return jsonify({'status': 'ok'})
 
-# Записаться на событие
 @app.route('/events/<int:event_id>/join', methods=['POST'])
 def join_event(event_id):
     user_id = request.json.get("user_id")
@@ -54,6 +55,15 @@ def join_event(event_id):
                 event['participants'].append(user_id)
             return jsonify({'status': 'ok'})
     return jsonify({"error": "event not found"}), 404
+
+@app.route('/events/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    username = request.args.get('username', '')
+    if username not in ADMIN_USERNAMES:
+        return jsonify({'error': 'forbidden'}), 403
+    global events
+    events = [e for e in events if e['id'] != event_id]
+    return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
