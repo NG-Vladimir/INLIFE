@@ -1,0 +1,406 @@
+:root {
+    --ios-bg: #f9fafb;
+    --ios-card: #ffffff;
+    --ios-text: #000000;
+    --ios-text-secondary: #8e8e93;
+    --ios-accent: #007AFF;
+    --ios-success: #34C759;
+    --ios-warning: #FF9500;
+    --ios-error: #FF3B30;
+    --ios-border: #c6c6c8;
+    --ios-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--ios-bg);
+    color: var(--ios-text);
+    line-height: 1.4;
+    padding-bottom: 80px;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px 16px;
+}
+
+/* Экраны */
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Заголовки */
+.screen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ios-text);
+}
+
+/* Приветственная карточка */
+.welcome-card {
+    background: var(--ios-card);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: var(--ios-shadow);
+    margin-top: 40px;
+}
+
+.welcome-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: var(--ios-accent);
+}
+
+.welcome-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--ios-text);
+}
+
+.welcome-text {
+    font-size: 16px;
+    color: var(--ios-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+/* Карточки событий */
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.event-card {
+    background: var(--ios-card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--ios-shadow);
+    border: 1px solid var(--ios-border);
+    transition: transform 0.2s ease;
+}
+
+.event-card:active {
+    transform: scale(0.98);
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.event-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ios-text);
+}
+
+.event-badge {
+    background: var(--ios-accent);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.event-detail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: var(--ios-text-secondary);
+}
+
+.detail-icon {
+    color: var(--ios-text-secondary);
+    font-size: 16px;
+    width: 20px;
+}
+
+/* Кнопки */
+.ios-button {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.ios-button.primary {
+    background: var(--ios-accent);
+    color: white;
+}
+
+.ios-button.primary:active {
+    background: #0056CC;
+    transform: scale(0.98);
+}
+
+.ios-button.secondary {
+    background: #f2f2f7;
+    color: var(--ios-text);
+    border: 1px solid var(--ios-border);
+}
+
+.ios-button.secondary:active {
+    background: #e5e5ea;
+    transform: scale(0.98);
+}
+
+.ios-button.success {
+    background: var(--ios-success);
+    color: white;
+}
+
+.ios-button.success:active {
+    background: #30a14e;
+}
+
+.ios-button.danger {
+    background: var(--ios-error);
+    color: white;
+}
+
+.ios-button.danger:active {
+    background: #d70015;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--ios-text-secondary);
+    font-size: 20px;
+    transition: background 0.2s ease;
+}
+
+.icon-button:active {
+    background: #f2f2f7;
+}
+
+/* Админ панель */
+.admin-card {
+    background: var(--ios-card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--ios-shadow);
+    margin-bottom: 20px;
+}
+
+.admin-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ios-text);
+}
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ios-text);
+}
+
+.form-group input {
+    padding: 12px 16px;
+    border: 1px solid var(--ios-border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: var(--ios-card);
+    color: var(--ios-text);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--ios-accent);
+}
+
+.admin-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid var(--ios-border);
+}
+
+.admin-event-info {
+    flex: 1;
+}
+
+.admin-event-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.admin-event-meta {
+    font-size: 14px;
+    color: var(--ios-text-secondary);
+}
+
+.admin-event-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.delete-btn {
+    background: var(--ios-error);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Нижняя навигация */
+.tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ios-card);
+    border-top: 1px solid var(--ios-border);
+    display: flex;
+    padding: 8px 0;
+    backdrop-filter: blur(20px);
+}
+
+.tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+    color: var(--ios-text-secondary);
+}
+
+.tab-item.active {
+    color: var(--ios-accent);
+}
+
+.tab-icon {
+    font-size: 22px;
+    margin-bottom: 2px;
+}
+
+.tab-label {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+/* Состояния */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: var(--ios-text-secondary);
+}
+
+.empty-text {
+    font-size: 16px;
+    color: var(--ios-text-secondary);
+    line-height: 1.4;
+}
+
+/* Адаптация под тёмную тему */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ios-bg: #000000;
+        --ios-card: #1c1c1e;
+        --ios-text: #ffffff;
+        --ios-text-secondary: #8e8e93;
+        --ios-border: #38383a;
+    }
+    
+    .ios-button.secondary {
+        background: #2c2c2e;
+        border-color: #38383a;
+    }
+    
+    .ios-button.secondary:active {
+        background: #3a3a3c;
+    }
+    
+    .form-group input {
+        background: #2c2c2e;
+        border-color: #38383a;
+        color: white;
+    }
+    
+    .admin-event-item {
+        background: #2c2c2e;
+    }
+}
+
+/* Утилиты */
+.admin-access {
+    display: none !important;
+}
+
+.show-admin .admin-access {
+    display: flex !important;
+}
