@@ -370,24 +370,20 @@ body {
     background: #f2f2f7;
 }
 
-/* Админ панель — табы как единый блок */
+/* Админ панель — табы auto-width без переноса */
 .admin-nav {
     display: flex;
     gap: 0;
     margin-bottom: 20px;
     overflow-x: auto;
     padding-bottom: 8px;
-    justify-content: flex-start;
     background: transparent;
     border-radius: 12px;
-    box-shadow: none;
 }
 
 .admin-nav-btn {
-    flex: 1 1 auto;
-    min-width: 80px;
-    min-height: 44px;
-    padding: 12px 18px;
+    flex: 0 0 auto;
+    padding: 10px 18px;
     border: 1px solid var(--ios-accent);
     border-right: none;
     background: #fff;
@@ -396,8 +392,10 @@ body {
     font-weight: 500;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 7px;
     white-space: nowrap;
+    text-align: center;
     border-radius: 0;
     transition: background 0.18s, color 0.18s;
     box-shadow: none;
