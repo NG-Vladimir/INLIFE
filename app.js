@@ -1,14 +1,27 @@
-const API_URL = "http://localhost:5000"; // Замени на свой сервер, если деплоишь!
+// === НАЧАЛО НОВОГО app.js ===
+// Адрес сервера API:
+const API_URL = "http://localhost:5000"; // если на хостинге, укажи свой адрес
 
+// Проверка, что приложение запущено через Telegram Mini App
+(function checkTelegramWebApp() {
+    if (typeof window.Telegram === 'undefined' || !window.Telegram.WebApp || !window.Telegram.WebApp.initDataUnsafe) {
+        document.body.innerHTML = '';
+        document.getElementById('tg-warning').style.display = 'block';
+    }
+})();
+
+// Инициализация Telegram Web App
 let tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
+console.log("INLIFE App запущен!");
 
+// Данные приложения
 let events = [];
 let users = [];
 let currentUser = null;
 
-// Получение пользователей и событий с сервера
+// --- API функции ---
 async function fetchUsers() {
     const res = await fetch(`${API_URL}/users`);
     users = await res.json();
@@ -19,7 +32,7 @@ async function fetchEvents() {
     events = await res.json();
 }
 
-// Отправка пользователя или обновления профиля
+// Синхронизация (добавление/обновление) пользователя
 async function syncUser(user) {
     await fetch(`${API_URL}/users`, {
         method: "POST",
@@ -28,6 +41,7 @@ async function syncUser(user) {
     });
 }
 
+// Обновление профиля пользователя
 async function updateUserProfile(user_id, data) {
     await fetch(`${API_URL}/users/${user_id}`, {
         method: "PATCH",
@@ -50,6 +64,15 @@ async function addEvent(eventData) {
     tg.showAlert('Событие успешно добавлено!');
 }
 
+// Удаление события
+async function deleteEvent(eventId) {
+    // (Пример без API удаления, просто убираем на клиенте)
+    events = events.filter(event => event.id !== eventId);
+    renderEvents();
+    renderAdminEvents();
+    tg.showAlert('Событие удалено (только на клиенте, для полного удаления — доработай API)');
+}
+
 // Присоединиться к событию
 async function joinEvent(eventId, button) {
     if (!currentUser) return;
@@ -70,8 +93,9 @@ async function joinEvent(eventId, button) {
     });
 }
 
-// --- UI и остальные функции (аналогично твоим, но без localStorage) ---
+// --- Логика приложения ---
 
+// Инициализация текущего пользователя
 function initCurrentUser() {
     const user = tg.initDataUnsafe.user;
     if (user) {
@@ -93,6 +117,7 @@ function initCurrentUser() {
     }
 }
 
+// Обновление профиля на экране
 function updateProfileDisplay() {
     if (currentUser) {
         document.getElementById('profile-display-name').textContent =
@@ -108,6 +133,7 @@ function updateProfileDisplay() {
     }
 }
 
+// Обновление статистики профиля
 function updateProfileStats() {
     document.getElementById('events-count').textContent =
         events.filter(event => event.participants.includes(currentUser.id)).length;
@@ -119,6 +145,8 @@ function updateProfileStats() {
         document.getElementById('days-till-birthday').textContent = '-';
     }
 }
+
+// --- Переключение экранов и вкладок ---
 
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
@@ -135,6 +163,7 @@ function showScreen(screenId) {
     }
 }
 
+// Обновление активной нижней вкладки
 function updateActiveTab(screenId) {
     const tabMap = {
         'welcome-screen': 0,
@@ -145,6 +174,24 @@ function updateActiveTab(screenId) {
         tab.classList.toggle('active', index === tabMap[screenId]);
     });
 }
+
+// --- Админка ---
+
+function showAdminTab(tabId, event) {
+    document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (event) event.currentTarget.classList.add('active');
+    if (tabId === 'users-tab') {
+        renderUsersList();
+    } else if (tabId === 'birthdays-tab') {
+        renderBirthdaysList();
+    } else if (tabId === 'events-tab') {
+        renderAdminEvents();
+    }
+}
+
+// --- Рендеры ---
 
 function renderEvents() {
     const container = document.getElementById('events-container');
@@ -194,6 +241,11 @@ function renderAdminEvents() {
                 <div class="admin-event-meta">${event.date} • ${event.location}</div>
                 <div class="admin-event-meta">${event.participants.length} участников</div>
             </div>
+            <div class="admin-event-actions">
+                <button class="delete-btn" onclick="deleteEvent(${event.id})">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
+            </div>
         </div>
     `).join('');
 }
@@ -220,6 +272,42 @@ function renderUsersList() {
     `).join('');
 }
 
+function renderBirthdaysList() {
+    const container = document.getElementById('birthdays-list-container');
+    const upcomingBirthdays = users
+        .filter(user => user.birthday)
+        .map(user => ({
+            ...user,
+            daysUntil: getDaysUntilBirthday(user.birthday)
+        }))
+        .filter(user => user.daysUntil <= 30)
+        .sort((a, b) => a.daysUntil - b.daysUntil);
+    if (upcomingBirthdays.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="ri-cake-line empty-icon"></i>
+                <p>Ближайшие дни рождения появятся здесь</p>
+            </div>
+        `;
+        return;
+    }
+    container.innerHTML = upcomingBirthdays.map(user => `
+        <div class="birthday-item">
+            <div class="birthday-info">
+                <div class="birthday-name">${user.fullName || `${user.firstName} ${user.lastName}`.trim()}</div>
+                <div class="birthday-meta">@${user.username}</div>
+                <div class="birthday-meta">
+                    ${user.daysUntil === 0 ? '🎉 Сегодня!' :
+                        user.daysUntil === 1 ? '🎂 Завтра!' :
+                        `🎂 Через ${user.daysUntil} дней`}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// --- Вспомогательные функции ---
+
 function getDaysUntilBirthday(birthday) {
     const today = new Date();
     const birthDate = new Date(birthday);
@@ -231,13 +319,16 @@ function getDaysUntilBirthday(birthday) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+// --- Инициализация приложения ---
+
 document.addEventListener('DOMContentLoaded', async function () {
     await fetchEvents();
     await fetchUsers();
     initCurrentUser();
     renderEvents();
     renderUsersList();
-    // обработка формы профиля
+
+    // Форма профиля
     document.getElementById('profile-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const fullName = document.getElementById('profile-fullname').value;
@@ -249,7 +340,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         updateProfileDisplay();
         tg.showAlert('Профиль сохранён!');
     });
-    // форма добавления события
+
+    // Форма добавления события
     document.getElementById('add-event-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const title = document.getElementById('event-title').value;
@@ -258,4 +350,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         await addEvent({ id: Date.now(), title, date, location });
         this.reset();
     });
+
+    // Форма рассылки (заготовка)
+    document.getElementById('broadcast-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        tg.showAlert('Рассылка доступна в будущем!');
+        this.reset();
+    });
 });
+// === КОНЕЦ НОВОГО app.js ===
