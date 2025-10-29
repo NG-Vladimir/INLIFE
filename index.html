@@ -2,10 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>INLIFE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
@@ -14,10 +16,13 @@
         <h3 style="color:#ff3b30;margin-bottom:12px;">Откройте через Telegram</h3>
         <p style="color:#444;">Для работы приложения его нужно открыть через Telegram-бота.<br>Нажмите кнопку “Открыть INLIFE App” у бота.</p>
     </div>
+    <!-- Главный экран -->
     <div id="welcome-screen" class="screen active">
         <div class="container">
             <div class="welcome-card">
-                <div class="welcome-icon"><i class="ri-team-line"></i></div>
+                <div class="welcome-icon">
+                    <i class="ri-team-line"></i>
+                </div>
                 <h1 class="welcome-title">Добро пожаловать в INLIFE</h1>
                 <p class="welcome-text">
                     Мы рады видеть тебя в INLIFE — это место, где молодёжь церкви объединяется, чтобы вдохновляться, служить и расти вместе.
@@ -31,6 +36,7 @@
             </div>
         </div>
     </div>
+    <!-- Экран событий -->
     <div id="events-screen" class="screen">
         <div class="container">
             <div class="screen-header">
@@ -39,13 +45,18 @@
                     <i class="ri-settings-3-line"></i>
                 </button>
             </div>
-            <div class="events-list" id="events-container"></div>
+            <div class="events-list" id="events-container">
+                <!-- События загружаются динамически -->
+            </div>
             <div class="empty-state" id="empty-events">
-                <div class="empty-icon"><i class="ri-calendar-todo-line"></i></div>
+                <div class="empty-icon">
+                    <i class="ri-calendar-todo-line"></i>
+                </div>
                 <p class="empty-text">Пока тишина… но скоро будет! Следи за обновлениями!</p>
             </div>
         </div>
     </div>
+    <!-- Экран профиля -->
     <div id="profile-screen" class="screen">
         <div class="container">
             <div class="screen-header">
@@ -53,7 +64,9 @@
             </div>
             <div class="profile-card">
                 <div class="profile-header">
-                    <div class="profile-avatar"><i class="ri-user-3-line"></i></div>
+                    <div class="profile-avatar">
+                        <i class="ri-user-3-line"></i>
+                    </div>
                     <div class="profile-info">
                         <h3 class="profile-name" id="profile-display-name">Загрузка...</h3>
                         <p class="profile-username" id="profile-username">@username</p>
@@ -67,7 +80,7 @@
                     <div class="form-group">
                         <label>День рождения</label>
                         <input type="date" id="profile-birthday">
-                        <small class="form-hint">Мы напомним команде<br>поздравить вас!</small>
+                        <small class="form-hint">Мы напомним команде поздравить вас!</small>
                     </div>
                     <button type="submit" class="ios-button primary">
                         <i class="ri-save-line"></i> Сохранить профиль
@@ -86,6 +99,7 @@
             </div>
         </div>
     </div>
+    <!-- Админ панель -->
     <div id="admin-screen" class="screen">
         <div class="container">
             <div class="screen-header">
@@ -94,20 +108,22 @@
                     <i class="ri-close-line"></i>
                 </button>
             </div>
+            <!-- Навигация админки -->
             <div class="admin-nav">
-                <button class="admin-nav-btn active" onclick="showAdminTab('events-tab', event)">
+                <button class="admin-nav-btn active" onclick="showAdminTab('events-tab')">
                     <i class="ri-calendar-2-line"></i> События
                 </button>
-                <button class="admin-nav-btn" onclick="showAdminTab('users-tab', event)">
+                <button class="admin-nav-btn" onclick="showAdminTab('users-tab')">
                     <i class="ri-user-line"></i> Пользователи
                 </button>
-                <button class="admin-nav-btn" onclick="showAdminTab('birthdays-tab', event)">
+                <button class="admin-nav-btn" onclick="showAdminTab('birthdays-tab')">
                     <i class="ri-cake-line"></i> Дни рождения
                 </button>
-                <button class="admin-nav-btn" onclick="showAdminTab('broadcast-tab', event)">
+                <button class="admin-nav-btn" onclick="showAdminTab('broadcast-tab')">
                     <i class="ri-megaphone-line"></i> Рассылка
                 </button>
             </div>
+            <!-- Вкладка событий -->
             <div id="events-tab" class="admin-tab active">
                 <div class="admin-card">
                     <h3 class="admin-title">Добавить событие</h3>
@@ -131,9 +147,12 @@
                 </div>
                 <div class="admin-card">
                     <h3 class="admin-title">Активные события</h3>
-                    <div class="admin-events-list" id="admin-events-container"></div>
+                    <div class="admin-events-list" id="admin-events-container">
+                        <!-- События для управления -->
+                    </div>
                 </div>
             </div>
+            <!-- Вкладка пользователей -->
             <div id="users-tab" class="admin-tab">
                 <div class="admin-card">
                     <h3 class="admin-title">Все пользователи</h3>
@@ -145,6 +164,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Вкладка дней рождений -->
             <div id="birthdays-tab" class="admin-tab">
                 <div class="admin-card">
                     <h3 class="admin-title">Ближайшие дни рождения</h3>
@@ -156,6 +176,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Вкладка рассылки -->
             <div id="broadcast-tab" class="admin-tab">
                 <div class="admin-card">
                     <h3 class="admin-title">Отправить сообщение</h3>
@@ -172,17 +193,24 @@
             </div>
         </div>
     </div>
+    <!-- Нижняя навигация (БЕЗ вкладки Управление) -->
     <div class="tab-bar">
         <div class="tab-item active" onclick="showScreen('welcome-screen')">
-            <div class="tab-icon"><i class="ri-home-4-line"></i></div>
+            <div class="tab-icon">
+                <i class="ri-home-4-line"></i>
+            </div>
             <div class="tab-label">Главная</div>
         </div>
         <div class="tab-item" onclick="showScreen('events-screen')">
-            <div class="tab-icon"><i class="ri-calendar-2-line"></i></div>
+            <div class="tab-icon">
+                <i class="ri-calendar-2-line"></i>
+            </div>
             <div class="tab-label">События</div>
         </div>
         <div class="tab-item" onclick="showScreen('profile-screen')">
-            <div class="tab-icon"><i class="ri-user-3-line"></i></div>
+            <div class="tab-icon">
+                <i class="ri-user-3-line"></i>
+            </div>
             <div class="tab-label">Профиль</div>
         </div>
     </div>
