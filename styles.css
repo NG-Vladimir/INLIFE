@@ -84,6 +84,112 @@ body {
     margin-bottom: 24px;
 }
 
+/* Карточка профиля */
+.profile-card {
+    background: var(--ios-card);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--ios-shadow);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    background: var(--ios-accent);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.profile-username {
+    font-size: 14px;
+    color: var(--ios-text-secondary);
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ios-text);
+}
+
+.form-group input, .form-group textarea {
+    padding: 12px 16px;
+    border: 1px solid var(--ios-border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: var(--ios-card);
+    color: var(--ios-text);
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--ios-accent);
+}
+
+.form-hint {
+    font-size: 13px;
+    color: var(--ios-text-secondary);
+    margin-top: 4px;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ios-border);
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ios-accent);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--ios-text-secondary);
+}
+
 /* Карточки событий */
 .events-list {
     display: flex;
@@ -234,46 +340,56 @@ body {
     color: var(--ios-text);
 }
 
+.admin-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.admin-nav-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--ios-border);
+    background: var(--ios-card);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.admin-nav-btn.active {
+    background: var(--ios-accent);
+    color: white;
+    border-color: var(--ios-accent);
+}
+
+.admin-tab {
+    display: none;
+}
+
+.admin-tab.active {
+    display: block;
+}
+
 .admin-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group label {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ios-text);
-}
-
-.form-group input {
-    padding: 12px 16px;
-    border: 1px solid var(--ios-border);
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: inherit;
-    background: var(--ios-card);
-    color: var(--ios-text);
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--ios-accent);
-}
-
-.admin-events-list {
+.admin-events-list, .users-list, .birthdays-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.admin-event-item {
+.admin-event-item, .user-item, .birthday-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -283,26 +399,26 @@ body {
     border: 1px solid var(--ios-border);
 }
 
-.admin-event-info {
+.admin-event-info, .user-info, .birthday-info {
     flex: 1;
 }
 
-.admin-event-name {
+.admin-event-name, .user-name, .birthday-name {
     font-weight: 600;
     margin-bottom: 4px;
 }
 
-.admin-event-meta {
+.admin-event-meta, .user-meta, .birthday-meta {
     font-size: 14px;
     color: var(--ios-text-secondary);
 }
 
-.admin-event-actions {
+.admin-event-actions, .user-actions {
     display: flex;
     gap: 8px;
 }
 
-.delete-btn {
+.delete-btn, .message-btn {
     background: var(--ios-error);
     color: white;
     border: none;
@@ -310,6 +426,10 @@ body {
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+}
+
+.message-btn {
+    background: var(--ios-accent);
 }
 
 /* Нижняя навигация */
@@ -385,13 +505,17 @@ body {
         background: #3a3a3c;
     }
     
-    .form-group input {
+    .form-group input, .form-group textarea {
         background: #2c2c2e;
         border-color: #38383a;
         color: white;
     }
     
-    .admin-event-item {
+    .admin-event-item, .user-item, .birthday-item {
+        background: #2c2c2e;
+    }
+    
+    .admin-nav-btn {
         background: #2c2c2e;
     }
 }
